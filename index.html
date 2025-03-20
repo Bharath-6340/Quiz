@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Scoreboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .options label {
+            display: block;
+            background: #ddd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .options label:hover {
+            background: #bbb;
+        }
+        input[type="radio"] {
+            display: none;
+        }
+        .answer {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .correct {
+            background: #28a745;
+            color: white;
+        }
+        .wrong {
+            background: #dc3545;
+            color: white;
+        }
+        .scoreboard {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Quiz with Scoreboard</h2>
+
+        <!-- Questions -->
+        <div id="quiz-content"></div>
+
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+            Score: <span id="score-percentage">0</span>%
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let questions = [
+                { question: "What is the capital of France?", options: ["Madrid", "Berlin", "Paris"], answer: "Paris" },
+                { question: "What is 5 + 3?", options: ["6", "7", "8"], answer: "8" },
+                { question: "What is the largest planet?", options: ["Earth", "Mars", "Jupiter"], answer: "Jupiter" },
+                { question: "Which gas do plants absorb?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen"], answer: "Carbon Dioxide" },
+                { question: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Leonardo da Vinci"], answer: "Leonardo da Vinci" },
+                { question: "What is the chemical symbol for gold?", options: ["Ag", "Au", "Pb"], answer: "Au" },
+                { question: "What is the square root of 64?", options: ["6", "8", "10"], answer: "8" },
+                { question: "Which is the fastest land animal?", options: ["Cheetah", "Lion", "Horse"], answer: "Cheetah" },
+                { question: "Who wrote *Hamlet*?", options: ["Shakespeare", "Dickens", "Austen"], answer: "Shakespeare" },
+                { question: "How many continents are there?", options: ["5", "7", "6"], answer: "7" }
+            ];
+
+            let quizContent = document.getElementById("quiz-content");
+            let correctScore = 0;
+
+            questions.forEach((q, index) => {
+                let questionHTML = `
+                    <div class="question">Q${index + 1}: ${q.question}</div>
+                    <div class="options">
+                        ${q.options.map(option => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${option}"> ${option}
+                            </label>
+                        `).join("")}
+                    </div>
+                    <div class="answer" id="answer-q${index}"></div>
+                `;
+                quizContent.innerHTML += questionHTML;
+            });
+
+            document.querySelectorAll(".quiz-container .options input").forEach(input => {
+                input.addEventListener("change", function () {
+                    let answerDiv = document.getElementById("answer-" + this.name);
+                    let questionIndex = parseInt(this.name.replace("q", ""));
+                    
+                    if (this.value === questions[questionIndex].answer) {
+                        answerDiv.textContent = "Correct!";
+                        answerDiv.className = "answer correct";
+                        correctScore++;
+                    } else {
+                        answerDiv.textContent = "Wrong! The correct answer is: " + questions[questionIndex].answer;
+                        answerDiv.className = "answer wrong";
+                    }
+
+                    answerDiv.style.display = "block";
+
+                    // Update score percentage
+                    let scorePercentage = Math.round((correctScore / questions.length) * 100);
+                    document.getElementById("score-percentage").textContent = scorePercentage;
+
+                    // Disable other options for this question
+                    document.querySelectorAll(`input[name="${this.name}"]`).forEach(i => i.disabled = true);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
